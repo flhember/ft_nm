@@ -1,3 +1,4 @@
+
 NAME = ft_nm
 CC = clang
 CFLAGS += -Wall
@@ -19,20 +20,18 @@ end=$ \033[0m
 
 #-----------------------------------------SRC/INC-------------------------------#
 
-LIB_BIN 	= libft.a
+NM_FILES	= ft_nm 32bits_files 64bits_files
+INC_FILES	= ft_nm.h
+LIB_BIN		= libft.a
 
 #---------------------------------------PATH/FILES-------------------------------#
 
-NM_PATH = ./nm/
-OTOOL_PATH = ./otool/
-
-SRC_PATH = /srcs/
-INC_PATH = /includes/
-OBJ_PATH = /obj/
+SRC_PATH = ./srcs/
+INC_PATH = ./includes/
+OBJ_PATH = ./obj/
 LIB_PATH = ./libft/
 
-
-SRC_FILES = $(LEM_IN_FILES:%=%.c)
+SRC_FILES = $(NM_FILES:%=%.c)
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
 LIB_SRC = $(addprefix $(LIB_PATH), $(SRC_PATH))
@@ -45,30 +44,10 @@ LIB = $(addprefix $(LIB_PATH), $(LIB_BIN))
 
 #------------------------------------------RULES--------------------------------#
 
-.PHONY: clean, fclean, all, re, help, lib, lemin, norm
 
-.DEFAULT_GOAL = help
-
-help:
-	@echo "$(whi)Usage:\n"
-	@echo "\t$(red_li)make <command>$(end) : \n"
-	@echo "- $(grn_li)lemin:\t$(whi)Compilation and creation of lem-in binary"
-	@echo "- $(grn_li)lib:\t\t$(whi)Compilation of libft library"
-	@echo "- $(grn_li)norm\t\t$(whi)Check"
-	@echo "- $(grn_li)clean:\t$(whi)Delete only object files from library and lem-in"
-	@echo "- $(grn_li)fclean:\t$(whi)Delete all object files and binay from lem-in and libft"
-	@echo "- $(grn_li)re:\t\t$(whi)Recompile lem-in project"
-	@echo "- $(grn_li)help:\t\t$(whi)Display this usage section"
-
-lemin: $(NAME)
+all: $(NAME)
 
 lib: $(LIB)
-
-norm: $(SRC_PATH) $(INC_PATH)
-	norminette $(LIB_INC)
-	norminette $(LIB_SRC)
-	norminette $(INC)
-	norminette $(SRC_PATH)
 
 $(OBJ_PATH):
 	@mkdir $(OBJ_PATH)
@@ -77,7 +56,7 @@ $(OBJ_PATH)%.o: $(SRC_PATH)%.c
 	@$(CC) $(CFLAGS) -c -I $(INC_PATH) -I $(LIB) $< -o $@
 	@echo "Compilation of $(whi)$(notdir $<)$(grn_da) done.$(end)"
 
-$(LIB): $(OBJ_LIB)
+$(LIB):
 	@make -C $(LIB_PATH)
 
 $(NAME): $(INC) $(LIB) $(OBJ_PATH) $(OBJ)
@@ -95,4 +74,6 @@ fclean: clean
 	@echo "$(red_li)$(notdir $(NAME))$(red_da) removed.$(end)"
 
 re: fclean
-	@make lemin
+	@make all
+
+.PHONY: clean, fclean, all, re, lib

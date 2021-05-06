@@ -35,7 +35,7 @@ char			*ft_ultoa_base(unsigned long n, int base)
 
 	cpy = n;
 	size = ft_get_size(cpy, base);
-	ascii = "0123456789XYZdef";
+	ascii = "0123456789abcdef";
 	if (base < 2 || base > 16)
 		return (NULL);
 	if (!(str = (char*)ft_memalloc(sizeof(char) * (size + 1))))
