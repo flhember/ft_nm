@@ -63,27 +63,27 @@ char    ft_find_type_64(Elf64_Sym sym, Elf64_Shdr *shdr, int swap)
 void	ft_print_nm_64(Elf64_Sym **tab, char *ptr, int size, char *symb_str, int swap)
 {
 	int		i;
-	//char		c;
+	char		c;
 	Elf64_Ehdr	*elf;
 	Elf64_Shdr	*shdr;
 	uint64_t	st_shndx;
-	uint64_t	st_info;
-	uint64_t	sh_flags;
+	//uint64_t	st_info;
+	//uint64_t	sh_flags;
 
 	elf = (Elf64_Ehdr *)ptr;
 	shdr = (Elf64_Shdr *)(ptr + swap64(elf->e_shoff, sizeof(elf->e_shoff), swap));
 	i = 0;
 	while (i < size)
 	{
-		//c = ft_find_type_64(*tab[i], shdr, swap);
+		c = ft_find_type_64(*tab[i], shdr, swap);
 		st_shndx = swap64(tab[i]->st_shndx, sizeof(tab[i]->st_shndx), swap);
-		/*if (st_shndx == SHN_UNDEF)
+		if (st_shndx == SHN_UNDEF)
 			printf("                ");
 		else
 			printf("%016lx", (unsigned long)swap64(tab[i]->st_value, sizeof(tab[i]->st_value), swap));
 		printf(" %c ", c);
-		printf("%s\n", symb_str + swap64(tab[i]->st_name, sizeof(tab[i]->st_name), swap));*/
-		if (ft_strcmp(symb_str + swap64(tab[i]->st_name, sizeof(tab[i]->st_name), swap), "__fstat") == 0
+		printf("%s\n", symb_str + swap64(tab[i]->st_name, sizeof(tab[i]->st_name), swap));
+		/*if (ft_strcmp(symb_str + swap64(tab[i]->st_name, sizeof(tab[i]->st_name), swap), "__fstat") == 0
 			|| ft_strcmp(symb_str + swap64(tab[i]->st_name, sizeof(tab[i]->st_name), swap), "fstat") == 0
 			|| ft_strcmp(symb_str + swap64(tab[i]->st_name, sizeof(tab[i]->st_name), swap), "data_start") == 0
 			|| ft_strcmp(symb_str + swap64(tab[i]->st_name, sizeof(tab[i]->st_name), swap), "__data_start") == 0)
@@ -104,7 +104,7 @@ void	ft_print_nm_64(Elf64_Sym **tab, char *ptr, int size, char *symb_str, int sw
 			printf("st flags = %lu\n", sh_flags);
 
 			printf("\n");
-		}
+		}*/
 		i++;
 	}
 }
@@ -176,7 +176,6 @@ Elf64_Sym	**ft_sort_symb_tab_64(Elf64_Sym **tab, int size, char *symb_str, int s
 				{
 					if (swap64(tab[i]->st_value, sizeof(tab[i]->st_value), swap) > swap64(tab[j]->st_value, sizeof(tab[j]->st_value), swap))
 					{
-						//printf("value > value\n");
 						tmp = tab[i];
 						tab[i] = tab[j];
 						tab[j] = tmp;
@@ -201,7 +200,6 @@ Elf64_Sym	**ft_sort_symb_tab_64(Elf64_Sym **tab, int size, char *symb_str, int s
 
 int	sort_and_print_64(Elf64_Sym **tab, char *ptr, int nb_symb, char *symb_str, int swap)
 {
-	//(void)ptr;
 	tab = ft_sort_symb_tab_64(tab, nb_symb, symb_str, swap);
 	ft_print_nm_64(tab, ptr,nb_symb, symb_str, swap);
 	return (0);
