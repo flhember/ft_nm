@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 NAME = libft.a
-CC = clang
+CC = gcc
 CFLAGS += -Wall
 CFLAGS += -Wextra
 CFLAGS += -Werror
@@ -84,7 +84,7 @@ $(NAME): $(INC_FILES) $(OBJ_PATH) $(OBJ_FILES)
 
 clean:
 	@$(RM) -R $(OBJ_PATH) $(DEPS)
-	@echo "$(red_li)Objects files of $(notdir $(NAME))$(red_da) removed.$(end)"
+#@echo "$(red_li)Objects files of $(notdir $(NAME))$(red_da) removed.$(end)"
 
 fclean: clean
 	@$(RM) -R $(NAME)

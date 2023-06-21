@@ -1,5 +1,6 @@
 #include "ft_nm.h"
 
+//save all valid symb in tab for sort and print after
 Elf32_Sym	**ft_set_symb_tab_32(char *ptr, Elf32_Sym **tab, char *symb_str, int idx_symb, int swap)
 {
 	int		i;
@@ -25,6 +26,7 @@ Elf32_Sym	**ft_set_symb_tab_32(char *ptr, Elf32_Sym **tab, char *symb_str, int i
 	return (tab);
 }
 
+//sh_size / sh_entsize (total size of all symbtab / size fix of each symbtab), loop on all symb, take only symb with name and not file.
 int	ft_find_nb_symb_32(char *ptr, char *symb_str, int idx_symb, int swap)
 {
 	int		nb_symb;
@@ -50,6 +52,7 @@ int	ft_find_nb_symb_32(char *ptr, char *symb_str, int idx_symb, int swap)
 	return (nb_symb);
 }
 
+//for symtab we need sh_link of symtab to find offset of symtab section, return ptr on symtab section
 char	*ft_find_symb_str_32(char *ptr, int idx_symb, int swap)
 {
 	Elf32_Ehdr	*elf;
@@ -64,6 +67,7 @@ char	*ft_find_symb_str_32(char *ptr, int idx_symb, int swap)
 	return ((char *)(ptr + swap32(shdr[tmp_sh_link].sh_offset, sizeof(shdr[tmp_sh_link].sh_offset), swap)));
 }
 
+//function loop on every section of elf file to find the index of symbole table section
 int	ft_find_index_symb_32(char *ptr, int swap)
 {
 	uint32_t	i;
@@ -82,6 +86,7 @@ int	ft_find_index_symb_32(char *ptr, int swap)
 	return (-1);
 }
 
+// Check error like if number of each section is > 0, if endianness is good, if have the good verions of elf (1) and if the file is not cut
 int	check_erreur_32(char *ptr, char *size_file, int swap, char *name)
 {
 	Elf32_Ehdr	*elf;
@@ -91,19 +96,20 @@ int	check_erreur_32(char *ptr, char *size_file, int swap, char *name)
 	{
                 ft_putstr_fd("ft_nm: ", 2);
                 ft_putstr_fd(name, 2);
-                ft_putstr_fd(": Format de fichier non reconnu\n", 2);
+                ft_putstr_fd(": file format not recognized\n", 2);
                 return (-1);
 	}
 	else if ((ptr + swap32(elf->e_shoff, sizeof(elf->e_shoff), swap)) > size_file)
 	{
 		ft_putstr_fd("ft_nm: ", 2);
 		ft_putstr_fd(name, 2);
-		ft_putstr_fd(": Fichier tronqué\n", 2);
+		ft_putstr_fd(": file too short\n", 2);
 		return (-1);
 	}
 	return (0);
 }
 
+// check error, find index of symb table, find how many valid symb, and creat and fill tab with symb
 int     parse_32bits_files(char *name, char *ptr, int ac, int swap, char *size_file)
 {
 	int		nb_symb;
@@ -121,7 +127,7 @@ int     parse_32bits_files(char *name, char *ptr, int ac, int swap, char *size_f
 	{
 		ft_putstr_fd("ft_nm: ", 2);
 		ft_putstr_fd(name, 2);
-		ft_putstr_fd(": aucun symbole\n", 2);
+		ft_putstr_fd(": no symbols\n", 2);
 		return (0);
 	}
 	else if (idx_symb == -1 || symb_str == NULL || nb_symb == -1)

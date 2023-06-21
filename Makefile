@@ -1,6 +1,6 @@
 
 NAME = ft_nm
-CC = clang
+CC = gcc
 CFLAGS += -Wall
 CFLAGS += -Wextra
 CFLAGS += -Werror
@@ -53,11 +53,11 @@ $(OBJ_PATH):
 	@mkdir $(OBJ_PATH)
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c
-	@$(CC) $(CFLAGS) -c -I $(INC_PATH) -I $(LIB) $< -o $@
+	@$(CC) $(CFLAGS) -c -I $(INC_PATH) $< -o $@
 	@echo "Compilation of $(whi)$(notdir $<)$(grn_da) done.$(end)"
 
 $(LIB):
-	@make -C $(LIB_PATH)
+	@make -sC $(LIB_PATH)
 
 $(NAME): $(INC) $(LIB) $(OBJ_PATH) $(OBJ)
 	@$(CC) $(CFLAGS) $(OBJ) $(LIB) -o $(NAME) -I $(INC_PATH)
@@ -65,15 +65,15 @@ $(NAME): $(INC) $(LIB) $(OBJ_PATH) $(OBJ)
 
 clean:
 	@$(RM) -R $(OBJ_PATH)
-	@make clean -C $(LIB_PATH)
+	@make clean -sC $(LIB_PATH)
 	@echo "$(red_li)Objects files of $(notdir $(NAME))$(red_da) removed.$(end)"
 
 fclean: clean
 	@$(RM) -R $(NAME)
-	@make fclean -C $(LIB_PATH)
+	@make fclean -sC $(LIB_PATH)
 	@echo "$(red_li)$(notdir $(NAME))$(red_da) removed.$(end)"
 
 re: fclean
-	@make all
+	@make all -s
 
 .PHONY: clean, fclean, all, re, lib

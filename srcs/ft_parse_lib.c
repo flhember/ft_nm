@@ -2,9 +2,6 @@
 
 char	*parse_long_file(char *long_file)
 {
-	int	i;
-
-	i = 0;
 	while (*long_file != '\n')
 		long_file++;
 	long_file++;

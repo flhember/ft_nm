@@ -8,20 +8,30 @@ char    ft_find_type_bis_32(uint32_t st_shndx, Elf32_Shdr *shdr, char c, int swa
 	sh_flags = swap32(shdr[st_shndx].sh_flags, sizeof(shdr[st_shndx].sh_flags), swap);
 	if (sh_type == SHT_NOBITS && sh_flags == (SHF_ALLOC | SHF_WRITE)) //.bss
 		c = 'B';
+	else if (sh_type == SHT_NOBITS && sh_flags == (SHF_ALLOC | SHF_WRITE | SHF_TLS)) //.tbss
+		c = 'B';
 	else if (sh_type == SHT_PROGBITS && sh_flags == (SHF_ALLOC | SHF_MERGE)) //.rodata*
 		c = 'R';
 	else if (sh_type == SHT_PROGBITS && sh_flags == (SHF_ALLOC)) //.rodata*
 		c = 'R';
+	else if (sh_type == SHT_PROGBITS && sh_flags == (SHF_ALLOC | SHF_MERGE | SHF_STRINGS)) //.rodata str
+		c = 'R';
 	else if (sh_type == SHT_PROGBITS && sh_flags == (SHF_ALLOC | SHF_WRITE)) //.data*
+		c = 'D';
+	else if (sh_type == SHT_PROGBITS && sh_flags == (SHF_WRITE | SHF_ALLOC | SHF_TLS)) //.tdata*
+		c = 'D';
+	else if (sh_type == SHT_INIT_ARRAY && sh_flags == (SHF_ALLOC | SHF_WRITE)) //.init_array
+		c = 'D';
+	else if (sh_type == SHT_FINI_ARRAY && sh_flags == (SHF_ALLOC | SHF_WRITE)) //.fini_array
+		c = 'D';
+	else if (sh_type == SHT_PREINIT_ARRAY && sh_flags == (SHF_WRITE | SHF_ALLOC)) //.preinit_array
 		c = 'D';
 	else if (sh_type == SHT_PROGBITS && sh_flags == (SHF_ALLOC | SHF_EXECINSTR)) //.text
 		c = 'T';
-	else if (sh_type == SHT_INIT_ARRAY && sh_flags == (SHF_ALLOC | SHF_WRITE)) //.init_array
+	else if (sh_type == SHT_PROGBITS && sh_flags == (SHF_ALLOC | SHF_EXECINSTR | SHF_GROUP)) //.text with group
 		c = 'T';
-	else if (sh_type == SHT_FINI_ARRAY && sh_flags == (SHF_ALLOC | SHF_WRITE)) //.fini_array
-		c = 'T';
-	else if (sh_flags == (SHF_ALLOC | SHF_WRITE | SHF_EXECINSTR)) //.plt
-		c = 'T';
+	else if (sh_type == SHT_GROUP && sh_flags == 0) //.group
+		c = 'N';
 	else if (sh_type == SHT_DYNAMIC) //.dynamic
 		c = 'D';
 	else
@@ -44,8 +54,11 @@ char    ft_find_type_32(Elf32_Sym sym, Elf32_Shdr *shdr, int swap)
 		c = 'W';
 		if (st_shndx == SHN_UNDEF)
 			c = 'w';
-		if (ELF32_ST_TYPE(st_info) == STT_OBJECT)
+		if (ELF32_ST_TYPE(st_info) == STT_OBJECT) {
 			c = 'V';
+			if (st_shndx == SHN_UNDEF)
+				c = 'v';
+		}
 	}
 	else if (st_shndx == SHN_UNDEF)
 		c = 'U';
@@ -53,6 +66,8 @@ char    ft_find_type_32(Elf32_Sym sym, Elf32_Shdr *shdr, int swap)
 		c = 'A';
 	else if (st_shndx == SHN_COMMON)
 		c = 'C';
+	else if (ELF32_ST_TYPE(st_info) == STT_GNU_IFUNC)
+		c = 'i';
 	else
 		c = ft_find_type_bis_32(st_shndx, shdr, c, swap);
 	if (ELF32_ST_BIND(st_info) == STB_LOCAL && c != '?')

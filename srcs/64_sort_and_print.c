@@ -8,20 +8,30 @@ char    ft_find_type_bis_64(uint64_t st_shndx, Elf64_Shdr *shdr, char c, int swa
 	sh_flags = swap64(shdr[st_shndx].sh_flags, sizeof(shdr[st_shndx].sh_flags), swap);
 	if (sh_type == SHT_NOBITS && sh_flags == (SHF_ALLOC | SHF_WRITE)) //.bss
 		c = 'B';
+	else if (sh_type == SHT_NOBITS && sh_flags == (SHF_ALLOC | SHF_WRITE | SHF_TLS)) //.tbss
+		c = 'B';
 	else if (sh_type == SHT_PROGBITS && sh_flags == (SHF_ALLOC | SHF_MERGE)) //.rodata*
 		c = 'R';
 	else if (sh_type == SHT_PROGBITS && sh_flags == (SHF_ALLOC)) //.rodata*
 		c = 'R';
+	else if (sh_type == SHT_PROGBITS && sh_flags == (SHF_ALLOC | SHF_MERGE | SHF_STRINGS)) //.rodata str
+		c = 'R';
 	else if (sh_type == SHT_PROGBITS && sh_flags == (SHF_ALLOC | SHF_WRITE)) //.data*
+		c = 'D';
+	else if (sh_type == SHT_PROGBITS && sh_flags == (SHF_WRITE | SHF_ALLOC | SHF_TLS)) //.tdata*
+		c = 'D';
+	else if (sh_type == SHT_INIT_ARRAY && sh_flags == (SHF_ALLOC | SHF_WRITE)) //.init_array
+		c = 'D';
+	else if (sh_type == SHT_FINI_ARRAY && sh_flags == (SHF_ALLOC | SHF_WRITE)) //.fini_array
+		c = 'D';
+	else if (sh_type == SHT_PREINIT_ARRAY && sh_flags == (SHF_WRITE | SHF_ALLOC)) //.preinit_array
 		c = 'D';
 	else if (sh_type == SHT_PROGBITS && sh_flags == (SHF_ALLOC | SHF_EXECINSTR)) //.text
 		c = 'T';
-	else if (sh_type == SHT_INIT_ARRAY && sh_flags == (SHF_ALLOC | SHF_WRITE)) //.init_array
+	else if (sh_type == SHT_PROGBITS && sh_flags == (SHF_ALLOC | SHF_EXECINSTR | SHF_GROUP)) //.text with group
 		c = 'T';
-	else if (sh_type == SHT_FINI_ARRAY && sh_flags == (SHF_ALLOC | SHF_WRITE)) //.fini_array
-		c = 'T';
-	else if (sh_flags == (SHF_ALLOC | SHF_WRITE | SHF_EXECINSTR)) //.fini_array
-		c = 'T';
+	else if (sh_type == SHT_GROUP && sh_flags == 0) //.group
+		c = 'N';
 	else if (sh_type == SHT_DYNAMIC) //.dynamic
 		c = 'D';
 	else
@@ -44,8 +54,11 @@ char    ft_find_type_64(Elf64_Sym sym, Elf64_Shdr *shdr, int swap)
 		c = 'W';
 		if (st_shndx == SHN_UNDEF)
 			c = 'w';
-		if (ELF64_ST_TYPE(st_info) == STT_OBJECT)
+		if (ELF64_ST_TYPE(st_info) == STT_OBJECT) {
 			c = 'V';
+			if (st_shndx == SHN_UNDEF)
+				c = 'v';
+		}
 	}
 	else if (st_shndx == SHN_UNDEF)
 		c = 'U';
@@ -53,6 +66,8 @@ char    ft_find_type_64(Elf64_Sym sym, Elf64_Shdr *shdr, int swap)
 		c = 'A';
 	else if (st_shndx == SHN_COMMON)
 		c = 'C';
+	else if (ELF64_ST_TYPE(st_info) == STT_GNU_IFUNC)
+		c = 'i';
 	else
 		c = ft_find_type_bis_64(st_shndx, shdr, c, swap);
 	if (ELF64_ST_BIND(st_info) == STB_LOCAL && c != '?')
@@ -67,6 +82,7 @@ void	ft_print_nm_64(Elf64_Sym **tab, char *ptr, int size, char *symb_str, int sw
 	Elf64_Ehdr	*elf;
 	Elf64_Shdr	*shdr;
 	uint64_t	st_shndx;
+
 	//uint64_t	st_info;
 	//uint64_t	sh_flags;
 
@@ -83,10 +99,10 @@ void	ft_print_nm_64(Elf64_Sym **tab, char *ptr, int size, char *symb_str, int sw
 			printf("%016lx", (unsigned long)swap64(tab[i]->st_value, sizeof(tab[i]->st_value), swap));
 		printf(" %c ", c);
 		printf("%s\n", symb_str + swap64(tab[i]->st_name, sizeof(tab[i]->st_name), swap));
-		/*if (ft_strcmp(symb_str + swap64(tab[i]->st_name, sizeof(tab[i]->st_name), swap), "__fstat") == 0
-			|| ft_strcmp(symb_str + swap64(tab[i]->st_name, sizeof(tab[i]->st_name), swap), "fstat") == 0
-			|| ft_strcmp(symb_str + swap64(tab[i]->st_name, sizeof(tab[i]->st_name), swap), "data_start") == 0
-			|| ft_strcmp(symb_str + swap64(tab[i]->st_name, sizeof(tab[i]->st_name), swap), "__data_start") == 0)
+		/*if (ft_strcmp(symb_str + swap64(tab[i]->st_name, sizeof(tab[i]->st_name), swap), "__progname@GLIBC_2.2.5") == 0
+			|| ft_strcmp(symb_str + swap64(tab[i]->st_name, sizeof(tab[i]->st_name), swap), "__init_array_end") == 0
+			|| ft_strcmp(symb_str + swap64(tab[i]->st_name, sizeof(tab[i]->st_name), swap), "__init_array_start") == 0
+			|| ft_strcmp(symb_str + swap64(tab[i]->st_name, sizeof(tab[i]->st_name), swap), "__do_global_dtors_aux_fini_array_entry") == 0)
 		{
 			st_info = swap64(tab[i]->st_info, sizeof(tab[i]->st_info), swap);
 			sh_flags = swap64(shdr[st_shndx].sh_flags, sizeof(shdr[st_shndx].sh_flags), swap);
@@ -94,21 +110,18 @@ void	ft_print_nm_64(Elf64_Sym **tab, char *ptr, int size, char *symb_str, int sw
 
 			printf("\n");
 			printf("%s\n", symb_str + swap64(tab[i]->st_name, sizeof(tab[i]->st_name), swap));
-			printf("value = %lu\n", (unsigned long)swap64(tab[i]->st_value, sizeof(tab[i]->st_value), swap));
-			printf("size = %lu\n", (unsigned long)swap64(tab[i]->st_size, sizeof(tab[i]->st_size), swap));
-			printf("info = %lu\n", (unsigned long)swap64(tab[i]->st_info, sizeof(tab[i]->st_info), swap));
-			printf("other = %lu\n", (unsigned long)swap64(tab[i]->st_other, sizeof(tab[i]->st_other), swap));
 			printf("shndx = %lu\n", (unsigned long)swap64(tab[i]->st_shndx, sizeof(tab[i]->st_shndx), swap));
 			printf("st bind = %d\n", ELF64_ST_BIND(st_info));
 			printf("st type = %lu\n", ELF64_ST_TYPE(st_info));
 			printf("st flags = %lu\n", sh_flags);
-
+			printf("%u\n", SHT_SUNW_move);
 			printf("\n");
 		}*/
 		i++;
 	}
 }
 
+// for sort we pass all str in "neutral" like write@GLIBC_2.2.5 -> WRITEGLIBC225
 char		*ft_neutral_str(char *str)
 {
 	size_t	i;
