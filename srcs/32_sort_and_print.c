@@ -30,6 +30,8 @@ char    ft_find_type_bis_32(uint32_t st_shndx, Elf32_Shdr *shdr, char c, int swa
 		c = 'T';
 	else if (sh_type == SHT_PROGBITS && sh_flags == (SHF_ALLOC | SHF_EXECINSTR | SHF_GROUP)) //.text with group
 		c = 'T';
+	else if (sh_type == SHT_PROGBITS && sh_flags == (SHF_WRITE | SHF_ALLOC | SHF_EXECINSTR)) //.plt
+		c = 'T';
 	else if (sh_type == SHT_GROUP && sh_flags == 0) //.group
 		c = 'N';
 	else if (sh_type == SHT_DYNAMIC) //.dynamic
@@ -91,11 +93,11 @@ void	ft_print_nm_32(Elf32_Sym **tab, char *ptr, int size, char *symb_str, int sw
 		c = ft_find_type_32(*tab[i], shdr, swap);
 		st_shndx = swap32(tab[i]->st_shndx, sizeof(tab[i]->st_shndx), swap);
 		if (st_shndx == SHN_UNDEF)
-			printf("        ");
+			ft_printf("        ");
 		else
-			printf("%08lx", (unsigned long)swap32(tab[i]->st_value, sizeof(tab[i]->st_value), swap));
-		printf(" %c ", c);
-		printf("%s\n", symb_str + swap32(tab[i]->st_name, sizeof(tab[i]->st_name), swap));
+			ft_printf("%08lx", (unsigned long)swap32(tab[i]->st_value, sizeof(tab[i]->st_value), swap));
+		ft_printf(" %c ", c);
+		ft_printf("%s\n", symb_str + swap32(tab[i]->st_name, sizeof(tab[i]->st_name), swap));
 		i++;
 	}
 }
@@ -106,7 +108,6 @@ Elf32_Sym	**ft_sort_symb_tab_32(Elf32_Sym **tab, int size, char *symb_str, int s
 	int		j;
 	int		res;
 	Elf32_Sym	*tmp;
-	char		*str1, *str2;
 
 	i = 0;
 	j = 1;
@@ -116,9 +117,7 @@ Elf32_Sym	**ft_sort_symb_tab_32(Elf32_Sym **tab, int size, char *symb_str, int s
 		j = i + 1;
 		while (j < size)
 		{
-			str1 = ft_neutral_str(symb_str + swap32(tab[i]->st_name, sizeof(tab[i]->st_name), swap));
-			str2 = ft_neutral_str(symb_str + swap32(tab[j]->st_name, sizeof(tab[j]->st_name), swap));
-			res = ft_strcmp(str1, str2);
+			res = ft_strcmp(symb_str + swap32(tab[i]->st_name, sizeof(tab[i]->st_name), swap), symb_str + swap32(tab[j]->st_name, sizeof(tab[j]->st_name), swap));
 			if (res > 0)
 			{
 				tmp = tab[i];
@@ -134,8 +133,6 @@ Elf32_Sym	**ft_sort_symb_tab_32(Elf32_Sym **tab, int size, char *symb_str, int s
 					tab[j] = tmp;
 				}
 			}
-			free(str1);
-			free(str2);
 			j++;
 		}
 		i++;

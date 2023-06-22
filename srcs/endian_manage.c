@@ -1,10 +1,9 @@
 #include "ft_nm.h"
 
-
-int	big_or_little_endian(char *ptr)
+int					big_or_little_endian(char *ptr)
 {
-	int	x;
-	char	*y;
+	int				x;
+	char			*y;
 
 	x = 1;
 	y = (char *)&x;
@@ -13,10 +12,10 @@ int	big_or_little_endian(char *ptr)
 	return (1);
 }
 
-uint32_t	swap32(uint32_t val, size_t size, int swap)
+uint32_t			swap32(uint32_t val, size_t size, int swap)
 {
-	int		i;
-	uint32_t	val_swap;
+	int				i;
+	uint32_t		val_swap;
 	unsigned char	*ptr_val;
 	unsigned char	*ptr_final;
 
@@ -32,10 +31,10 @@ uint32_t	swap32(uint32_t val, size_t size, int swap)
 	return (val_swap);
 }
 
-uint64_t	swap64(uint64_t val, size_t size, int swap)
+uint64_t			swap64(uint64_t val, size_t size, int swap)
 {
-	int		i;
-	uint64_t	val_swap;
+	int				i;
+	uint64_t		val_swap;
 	unsigned char	*ptr_val;
 	unsigned char	*ptr_final;
 

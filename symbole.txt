@@ -177,17 +177,24 @@ Key to Flags:
 
                 ORDER PB :
     nm:                         ft_nm:
-00014fc8 t error_tail       00014fc8 t error_tail
-00017670 t exchange         00017670 t exchange
+00014fc8 t error_tail         00014fc8 t error_tail
+00017670 t exchange           00017670 t exchange
          U _exit                     U exit
          U exit                      U _exit
-000258c0 D exit_failure     000258c0 D exit_failure
+000258c0 D exit_failure       000258c0 D exit_failure
 
+00040140 d __CTOR_LIST__      00040140 d __CTOR_LIST__
+000406c0 B __ctype            000406c0 V _ctype
+000406c0 V _ctype             000406c0 B __ctype 
+0004026c b current_time       0004026c b current_time
 
-
-
-
+         U towlower                    U towlower
+000408d8 B _tzname            000408d8 B tzname
+000408d8 B tzname             000408d8 B _tzname
+         U tzset                       U tzset
 
 
 Big order pb!
 /usr/lib/gcc/x86_64-linux-gnu/10/libgomp.a
+
+elf/testbench/elf-solaris-sparc-ls

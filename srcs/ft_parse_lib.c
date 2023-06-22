@@ -1,6 +1,6 @@
 #include "ft_nm.h"
 
-char	*parse_long_file(char *long_file)
+char				*parse_long_file(char *long_file)
 {
 	while (*long_file != '\n')
 		long_file++;
@@ -8,11 +8,11 @@ char	*parse_long_file(char *long_file)
 	return (long_file);
 }
 
-char	*return_name_file(char *long_file, int size)
+char				*return_name_file(char *long_file, int size)
 {
-	int	i;
-	char	*tmp;
-	int	size_malloc;
+	int				i;
+	char			*tmp;
+	int				size_malloc;
 	
 	i = 0;
 	tmp = NULL;
@@ -32,10 +32,10 @@ char	*return_name_file(char *long_file, int size)
 	return (tmp);
 }
 
-void	print_ar_hdr(struct ar_hdr *lib, char *long_file)
+void				print_ar_hdr(struct ar_hdr *lib, char *long_file)
 {
-	int	test;
-	char	*tmp;
+	int				test;
+	char			*tmp;
 
 	test = 0;
 	if (lib->ar_name[0] == '/')
@@ -53,10 +53,10 @@ void	print_ar_hdr(struct ar_hdr *lib, char *long_file)
 	}
 }
 
-int	parse_lib(char *ptr, int ac, char *size_file)
+int					parse_lib(char *ptr, int ac, char *size_file)
 {
 	struct ar_hdr	*lib;
-	char		*long_file;
+	char			*long_file;
 
 	lib = NULL;
 	long_file = NULL;

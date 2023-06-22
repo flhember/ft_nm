@@ -133,7 +133,7 @@ int     parse_32bits_files(char *name, char *ptr, int ac, int swap, char *size_f
 	else if (idx_symb == -1 || symb_str == NULL || nb_symb == -1)
 		return (-1);
 	if (ac > 2)
-		ft_printf("%s:\n", name);
+		ft_printf("\n%s:\n", name);
 	if (!(tab = (Elf32_Sym **)malloc(sizeof(Elf32_Sym *) * (nb_symb + 1))))
 		return (-3);
 	tab = ft_set_symb_tab_32(ptr, tab, symb_str, idx_symb, swap);
