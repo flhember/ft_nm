@@ -103,7 +103,7 @@ int	check_erreur_32(char *ptr, char *size_file, int swap, char *name)
 	{
 		ft_putstr_fd("ft_nm: ", 2);
 		ft_putstr_fd(name, 2);
-		ft_putstr_fd(": file too short\n", 2);
+        ft_putstr_fd(": file format not recognized\n", 2);
 		return (-1);
 	}
 	return (0);

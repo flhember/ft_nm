@@ -42,13 +42,13 @@ void				print_ar_hdr(struct ar_hdr *lib, char *long_file)
 	{
 		test = ft_atoi(lib->ar_name + 1);
 		tmp = return_name_file(long_file, test);
-		printf("\n%s:\n", tmp);
+		ft_printf("\n%s:\n", tmp);
 		free(tmp);
 	}
 	else
 	{
 		tmp = return_name_file(lib->ar_name, -1);
-		printf("\n%s:\n", tmp);
+		ft_printf("\n%s:\n", tmp);
 		free(tmp);
 	}
 }
